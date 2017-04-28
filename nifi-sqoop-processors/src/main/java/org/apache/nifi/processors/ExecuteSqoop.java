@@ -203,7 +203,6 @@ public class ExecuteSqoop extends AbstractProcessor {
         	  throw ex;
           }
     }
-
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
         FlowFile flowFile = session.get();
@@ -221,61 +220,4 @@ public class ExecuteSqoop extends AbstractProcessor {
             }
         // TODO implement
     }
-    
-    public static void main(String[] args){
-    	//FileInputStream fis = new FileInputStream("/)
-    	System.setProperty(org.apache.sqoop.Sqoop.SQOOP_RETHROW_PROPERTY, "true");
-    	PropertyConfigurator.configure("/Users/knarayanan/log4j.properties");
-    	String arguments = new String("import-all-tables --driver com.mysql.jdbc.Driver "
-    			+ "--connect jdbc:mysql://se-hdp251.field.hortonworks.com:3306/employees "
-    			+ "--username root --password password --warehouse-dir /user/knarayanan/employees1"
-    			+ "");
-    	String configResources="/Users/knarayanan/sehdp25/core-site.xml,/Users/knarayanan/sehdp25/hive-site.xml,"
-    			+ "/Users/knarayanan/sehdp25/mapred/mapred-site.xml,/Users/knarayanan/sehdp25/yarn/yarn-site.xml";
-    	String[] resources = configResources.split(",");
-    	Configuration config = new Configuration();
-        for (String resource : resources) {
-        	config.addResource(new Path(resource.trim()));
-        }
-        try{
-		Sqoop.runTool(arguments.split(" "), config);
-        }catch(RuntimeException ex){
-        	System.out.println(ex.getMessage());
-        	ex.printStackTrace();
-        }
-       
-    }
-    
-   /* public static void main(String[] args){
-    	PropertyConfigurator.configure("/Users/knarayanan/log4j.properties");
-    	String arguments = new String("import --table employees --verbose --driver com.mysql.jdbc.Driver --connect jdbc:mysql://localhost:32770/employees "
-    			+ "--username root --password password");
-    	String[] expandedArgs=null;
-        try {
-          expandedArgs = OptionsFileUtil.expandArguments(arguments.split(" "));
-        } catch (Exception ex) {
-          logger.error("Error while expanding arguments", ex);
-          System.err.println(ex.getMessage());
-          System.err.println("Try 'sqoop help' for usage.");
-        }
-
-        String toolName = expandedArgs[0];
-        String configResources="/Users/knarayanan/sehdp25/core-site.xml,/Users/knarayanan/sehdp25/hive-site.xml,"
-    			+ "/Users/knarayanan/sehdp25/mapred/mapred-site.xml,/Users/knarayanan/sehdp25/yarn/yarn-site.xml";
-    	String[] resources = configResources.split(",");
-    	Configuration config = new Configuration();
-        for (String resource : resources) {
-        	config.addResource(new Path(resource.trim()));
-        }
-        //Configuration pluginConf = SqoopTool.loadPlugins(config);
-        SqoopTool tool = null;
-        if (null == tool) {
-          logger.error("No such sqoop tool: " + toolName
-              + ". See 'sqoop help'.");
-        }
-
-
-        Sqoop.runSqoop(sqoop,
-            Arrays.copyOfRange(expandedArgs, 1, expandedArgs.length));
-    }*/
 }
