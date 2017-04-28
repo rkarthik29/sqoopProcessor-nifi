@@ -28,9 +28,9 @@ public class ExecuteSqoopTest {
     @Test
     public void testImport() {
     	
-    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://se-hdp251.field.hortonworks.com:3306/employees");
+    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://mysql:3306/employees");
     	testRunner.setProperty(ExecuteSqoop.DB_DRIVER, "com.mysql.jdbc.Driver");
-    	testRunner.setProperty(ExecuteSqoop.DB_USER,"root");
+    	testRunner.setProperty(ExecuteSqoop.DB_USER,"user");
     	testRunner.setProperty(ExecuteSqoop.DB_PASS,"password");
     	testRunner.setProperty(ExecuteSqoop.SQOOP_COMMAND, "import");
     	testRunner.setProperty(ExecuteSqoop.TABLE, "employees");
@@ -48,14 +48,16 @@ public class ExecuteSqoopTest {
     @Test
     public void testExport() {
     	
-    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://se-hdp251.field.hortonworks.com:3306/employees");
+    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://myhost:3306/employees");
     	testRunner.setProperty(ExecuteSqoop.DB_DRIVER, "com.mysql.jdbc.Driver");
-    	testRunner.setProperty(ExecuteSqoop.DB_USER,"root");
+    	testRunner.setProperty(ExecuteSqoop.DB_USER,"user");
     	testRunner.setProperty(ExecuteSqoop.DB_PASS,"password");
     	testRunner.setProperty(ExecuteSqoop.SQOOP_COMMAND, "export");
     	testRunner.setProperty(ExecuteSqoop.TABLE, "employees1");
     	testRunner.setProperty(ExecuteSqoop.HDFS_CONFIG_RESOURCES, "/Users/knarayanan/sehdp25/core-site.xml,/Users/knarayanan/sehdp25/hive-site.xml,"
     			+ "/Users/knarayanan/sehdp25/mapred/mapred-site.xml,/Users/knarayanan/sehdp25/yarn/yarn-site.xml");
+    	testRunner.setProperty("--export-dir", "/user/knarayanan/employees");
+    	testRunner.setValidateExpressionUsage(false);
     	testRunner.run();
 
         List<MockFlowFile> flowFiles = testRunner.getFlowFilesForRelationship(ExecuteSqoop.SUCCESS);
@@ -68,9 +70,9 @@ public class ExecuteSqoopTest {
     @Test
     public void testImportAllTables() {
     	
-    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://se-hdp251.field.hortonworks.com:3306/employees");
+    	testRunner.setProperty(ExecuteSqoop.DB_URL,"jdbc:mysql://myhost:3306/employees");
     	testRunner.setProperty(ExecuteSqoop.DB_DRIVER, "com.mysql.jdbc.Driver");
-    	testRunner.setProperty(ExecuteSqoop.DB_USER,"root");
+    	testRunner.setProperty(ExecuteSqoop.DB_USER,"user");
     	testRunner.setProperty(ExecuteSqoop.DB_PASS,"password");
     	testRunner.setProperty(ExecuteSqoop.SQOOP_COMMAND, "import-all-tables");
     	testRunner.setProperty(ExecuteSqoop.HDFS_CONFIG_RESOURCES, "/Users/knarayanan/sehdp25/core-site.xml,/Users/knarayanan/sehdp25/hive-site.xml,"

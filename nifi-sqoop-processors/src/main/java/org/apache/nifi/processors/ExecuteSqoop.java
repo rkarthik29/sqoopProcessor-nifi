@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
 import org.apache.nifi.annotation.behavior.WritesAttribute;
@@ -35,7 +34,6 @@ import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnScheduled;
 import org.apache.nifi.components.PropertyDescriptor;
-import org.apache.nifi.expression.AttributeExpression.ResultType;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
@@ -45,6 +43,11 @@ import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.sqoop.Sqoop;
+import org.apache.sqoop.util.Jars;
+
+import com.cloudera.sqoop.SqoopOptions;
+import com.cloudera.sqoop.tool.SqoopTool;
+
 
 
 
@@ -118,6 +121,10 @@ public class ExecuteSqoop extends AbstractProcessor {
             .name("Success")
             .description("Success relationship")
             .build();
+    public static final Relationship FAILURE = new Relationship.Builder()
+            .name("Failure")
+            .description("Failure relationship")
+            .build();
 
     private List<PropertyDescriptor> descriptors;
 
@@ -125,6 +132,7 @@ public class ExecuteSqoop extends AbstractProcessor {
     
     private String[] sqoopArguments;
     private Configuration config;
+    private Sqoop sqoop;
 
     @Override
     protected void init(final ProcessorInitializationContext context) {
@@ -140,6 +148,7 @@ public class ExecuteSqoop extends AbstractProcessor {
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
         relationships.add(SUCCESS);
+        relationships.add(FAILURE);
         this.relationships = Collections.unmodifiableSet(relationships);
     }
 
@@ -168,7 +177,8 @@ public class ExecuteSqoop extends AbstractProcessor {
     @OnScheduled
     public void onScheduled(final ProcessContext context) {
           ArrayList<String> arguments = new ArrayList<String>();
-          arguments.add(context.getProperty(SQOOP_COMMAND).getValue() );
+          SqoopTool tool = SqoopTool.getTool(context.getProperty(SQOOP_COMMAND).getValue());
+          //arguments.add(context.getProperty(SQOOP_COMMAND).getValue() );
           arguments.add("--driver");
           arguments.add(context.getProperty(DB_DRIVER).getValue());
           arguments.add("--connect");
@@ -191,6 +201,12 @@ public class ExecuteSqoop extends AbstractProcessor {
 	          }
           }
           
+          SqoopOptions options = new SqoopOptions();
+          String sqoopPath = Jars.getSqoopJarPath();
+          options.setHadoopMapRedHome(sqoopPath.substring(0,sqoopPath.lastIndexOf('/')));
+          
+          sqoop = new Sqoop(tool,config,options);
+          
           for (final PropertyDescriptor descriptor : context.getProperties().keySet()) {
               if (descriptor.isDynamic()) {
                   arguments.add(descriptor.getName());
@@ -211,10 +227,13 @@ public class ExecuteSqoop extends AbstractProcessor {
         }
     	try{
     		System.setProperty(Sqoop.SQOOP_RETHROW_PROPERTY, "true");
-    		int status = Sqoop.runTool(sqoopArguments, config);
+    		//System.out.println(Jars.getSqoopJarPath()+"--"+Jars.getJarPathForClass(Sqoop.class));
+    		//int status = Sqoop.runTool(sqoopArguments, config);
+    		int status = Sqoop.runSqoop(sqoop, sqoopArguments);
     		flowFile = session.putAttribute(flowFile, "status", ""+status);
     		session.transfer(flowFile,SUCCESS);
             }catch(RuntimeException ex){
+            	session.transfer(flowFile,FAILURE);
             	System.out.println(ex.getMessage());
             	ex.printStackTrace();
             }
