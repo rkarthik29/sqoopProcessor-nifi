@@ -29,7 +29,14 @@
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <source.skip>true</source.skip>
     </properties>
-
+    <repositories>
+    <repository>
+      <id>hdp-repo</id>
+      <name>hdprepo</name>
+      <url>http://repo.hortonworks.com/content/groups/public/</url>
+    </repository>
+  </repositories>
+  
     <dependencies>
         <dependency>
             <groupId>org.apache.nifi</groupId>
