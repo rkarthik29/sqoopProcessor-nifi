@@ -112,6 +112,7 @@ public class ExecuteSqoop extends AbstractHadoopProcessor {
             .displayName("DB Table Name")
             .description("DB Table Name")
             .required(false)
+            .expressionLanguageSupported(true)
             .addValidator(StandardValidators.ATTRIBUTE_EXPRESSION_LANGUAGE_VALIDATOR)
             .build();
 
