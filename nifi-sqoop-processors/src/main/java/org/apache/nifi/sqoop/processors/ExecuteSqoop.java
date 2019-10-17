@@ -46,10 +46,10 @@ import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.processors.hadoop.AbstractHadoopProcessor;
-import org.apache.sqoop.Sqoop;
-import org.apache.sqoop.SqoopOptions;
-import org.apache.sqoop.tool.SqoopTool;
-import org.apache.sqoop.util.Jars;
+import com.cloudera.sqoop.Sqoop;
+import com.cloudera.sqoop.SqoopOptions;
+import com.cloudera.sqoop.tool.SqoopTool;
+import com.cloudera.sqoop.util.Jars;
 
 
 

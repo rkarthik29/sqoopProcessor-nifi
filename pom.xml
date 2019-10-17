@@ -23,16 +23,21 @@
     </parent>
 	<properties>
         <nifi.version>1.5.0.3.1.1.0-35</nifi.version>
-        <sqoop.version>1.4.7.3.0.0.4-42</sqoop.version>
-        <hadoop.version>2.7.3.2.6.5.8-2</hadoop.version>
+        <sqoop.version>1.4.6-cdh5.14.4</sqoop.version>
+        <hadoop.version>2.6.0-cdh5.14.4</hadoop.version>
         <hadoop.guava.version>12.0.1</hadoop.guava.version>
         <org.slf4j.version>1.7.25</org.slf4j.version>
     </properties>
     <groupId>org.apache.nifi</groupId>
     <artifactId>sqoop</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-cdh-5.14</version>
     <packaging>pom</packaging>
     <repositories>
+    <repository>
+      <id>cldr-repo</id>
+      <name>cldrrepo</name>
+      <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+    </repository>
     <repository>
       <id>hdp-repo</id>
       <name>hdprepo</name>
